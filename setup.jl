@@ -5,5 +5,4 @@ pkg"add https://github.com/essenciary/Genie.jl"
 pkg"add https://github.com/sciabarracom/openwhisk-knative-operator#devel"
 Pkg.test("OpenWhiskKnative")
 Pkg.build()
-using OpenWhiskKnative
 

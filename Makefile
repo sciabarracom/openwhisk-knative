@@ -12,5 +12,8 @@ setup.jl: $(find src test -name \*.jl)
 clean:
 	docker rmi -f $(IMG)
 
+shell:
+	docker run -ti -p 8000:8000 $(IMG) bash
+
 run:
 	docker run -p 8000:8000 $(IMG)
