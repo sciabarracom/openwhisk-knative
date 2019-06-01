@@ -104,9 +104,15 @@ version = "0.20.0"
 
 [[JuliaInterpreter]]
 deps = ["CodeTracking", "InteractiveUtils", "Random", "UUIDs"]
-git-tree-sha1 = "599cc7c6683e54cd0b3786ee37800db037e22df4"
+git-tree-sha1 = "ed46097f465a091f6b126966015048193791743a"
 uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
-version = "0.5.2"
+version = "0.6.0"
+
+[[Kuber]]
+deps = ["Dates", "HTTP", "JSON", "Random", "Swagger", "Test"]
+git-tree-sha1 = "3873a0a02ff888207bd7205bb62970ab631513ba"
+uuid = "87e52247-8a1b-5e01-9430-8fbcac83a23a"
+version = "0.2.0"
 
 [[LibGit2]]
 uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
@@ -123,9 +129,9 @@ uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
 [[LoweredCodeUtils]]
 deps = ["JuliaInterpreter"]
-git-tree-sha1 = "c530b90b64249b525f1e40e71f64d5382c62f073"
+git-tree-sha1 = "dc151afc3125e225267a55e2b5592d0b90fb0e1a"
 uuid = "6f1432cf-f94c-5a45-995e-cdbf5db27b0b"
-version = "0.3.4"
+version = "0.3.5"
 
 [[Markdown]]
 deps = ["Base64"]
@@ -151,6 +157,12 @@ version = "0.2.0"
 
 [[Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
+
+[[Mocking]]
+deps = ["Compat", "Dates"]
+git-tree-sha1 = "4bf69aaf823b119b034e091e16b18311aa191663"
+uuid = "78c3b35d-d492-501b-9361-3d52fe80e533"
+version = "0.5.7"
 
 [[Nettle]]
 deps = ["BinDeps", "BinaryProvider", "Libdl", "Test"]
@@ -194,9 +206,9 @@ version = "0.2.0"
 
 [[Revise]]
 deps = ["CodeTracking", "Distributed", "FileWatching", "JuliaInterpreter", "LibGit2", "LoweredCodeUtils", "OrderedCollections", "Pkg", "REPL", "UUIDs", "Unicode"]
-git-tree-sha1 = "0148fc4b3392778e09eb75c4971ce75424acd1d1"
+git-tree-sha1 = "09cbf077a36bf58e7d5d2b026bb2af8c92931993"
 uuid = "295af30f-e4ad-537b-8983-00126c2a3abe"
-version = "2.1.5"
+version = "2.1.6"
 
 [[SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
@@ -218,6 +230,12 @@ uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 [[Statistics]]
 deps = ["LinearAlgebra", "SparseArrays"]
 uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+
+[[Swagger]]
+deps = ["Dates", "HTTP", "JSON", "MbedTLS"]
+git-tree-sha1 = "a10bdc6919751ff88b3cd0f840e28d6e0b0f6671"
+uuid = "2d69052b-6a58-5cd9-a030-a48559c324ac"
+version = "0.2.3"
 
 [[Test]]
 deps = ["Distributed", "InteractiveUtils", "Logging", "Random"]

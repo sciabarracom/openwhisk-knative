@@ -5,4 +5,6 @@ version = "0.1.0"
 
 [deps]
 Genie = "c43c736e-a2d1-11e8-161f-af95117fbd1e"
+Kuber = "87e52247-8a1b-5e01-9430-8fbcac83a23a"
+Mocking = "78c3b35d-d492-501b-9361-3d52fe80e533"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
