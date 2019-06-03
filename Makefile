@@ -6,6 +6,9 @@ IMG=$(USER)/$(NAME):$(VERS)
 build: setup.jl
 	docker build -t $(IMG) .
 
+build2:
+	docker build -f Dockerfile2  -t docker.io/msciab/kubectl .
+
 setup.jl: $(find src test -name \*.jl)
 	touch setup.jl
 
