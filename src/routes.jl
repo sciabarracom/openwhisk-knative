@@ -8,6 +8,10 @@ route("/api/v1/namespaces/:namespace/actions") do
     action_list(namespace) 
 end
 
+route("/api/v1/namespaces") do
+    return ["local"] |> json!
+end
+
 route("/") do
     "OpenWhiskKnative 0.0.1\n"
 end

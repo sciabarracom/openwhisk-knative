@@ -5,4 +5,3 @@ function install_knative_serving()
     cmd = split("$APPLY -f $SERVING/serving.yaml")
     run(`$cmd`)
 end
-install_knative_serving()

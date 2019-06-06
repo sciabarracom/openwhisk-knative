@@ -4,8 +4,8 @@ kind: ServiceAccount
 metadata:
   name: kubectl-role
 ---
-kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
 metadata:
   name: kubectl-role
 subjects:
@@ -33,5 +33,5 @@ spec:
       - name: kubectl
         imagePullPolicy: Always
         image: msciab/kubectl
-        command: ["tail"]
-        args: ["-f", "/de/null"]
+        command: [ "tail" ]
+        args: [ "-f", "/dev/null" ]

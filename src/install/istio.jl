@@ -1,7 +1,5 @@
 ISTIO_VERSION = "1.1.7"
 ISTIO_REPO="https://storage.googleapis.com/istio-release/releases/$ISTIO_VERSION/charts/"
-ISTIO_OPTS="
-ISTIO_ARGS(node_type)="
 
 function install_istio(node_type="NodePort")
    run(`helm repo add istio.io $ISTIO_REPO`)
