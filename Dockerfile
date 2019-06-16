@@ -11,4 +11,4 @@ RUN curl -Ls \
   -o /usr/local/bin/glooctl && chmod +x /usr/local/bin/glooctl
 ADD setup.jl .
 RUN julia setup.jl
-CMD julia -e 'using Pkg; Pkg.activate("."); using OpenWhiskKnative'
+CMD julia -e 'using Pkg; Pkg.activate("."); using KnativeWhisk'

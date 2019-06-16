@@ -1,11 +1,10 @@
 using Test
 using Logging
 
-disable_logging(Base.CoreLogging.Info)
+@testset "Install" begin 
+  include("install.jl")
+end
 
-@testset "KnativeWhisk" begin
-
-include("actions/list.jl")
-include("install/istio.jl")
-
+@testset "Routes" begin 
+    include("routes.jl")
 end
