@@ -1,5 +1,9 @@
-using Genie
 module KnativeWhisk
+using Genie
+
+include("install.jl")
+
+install_knative()
 
 include("routes.jl")
 
