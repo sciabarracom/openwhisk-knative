@@ -19,6 +19,7 @@ function read(cmd::Cmd, String)
 end
 
 # tests
+
 mock_read = ["default\n"]
 
 @test_logs( 

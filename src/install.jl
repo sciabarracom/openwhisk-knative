@@ -7,7 +7,7 @@ function run_log(cmd::Cmd)
     run(cmd)
 end
 
-function read_log(cmd::Cmd)
+function read_log(cmd::Cmd, args)
     @info join(cmd.exec, " ")
     return read(cmd, String)
 end
@@ -71,3 +71,16 @@ function install_knative(node_type="NodePort")
     install_knative_serving()
     install_tekton()
 end
+
+function check_all_pod_phase(namespace, state="Running")
+    selector = """{range .items[*]}{.status.phase}{"\\n"}{end}"""
+    cmd = `kubectl -n $namespace get pod -o jsonpath=$selector`
+    for line in split(read_log(cmd))
+        if line != state
+            return false
+        end
+    end
+    return true
+end
+
+
