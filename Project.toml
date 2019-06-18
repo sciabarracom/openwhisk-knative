@@ -1,5 +1,5 @@
 name = "KnativeWhisk"
-uuid = "74dafe4a-86f0-11e9-2f70-9b7b7fa3fdc3"
+uuid = "f3249f74-9210-11e9-1214-bd5bad354a81"
 authors = ["Michele Sciabarra <msciabarra@apache.org>"]
 version = "0.1.0"
 

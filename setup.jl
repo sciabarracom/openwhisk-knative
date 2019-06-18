@@ -4,8 +4,7 @@ using Pkg
 pkg"activate ."
 pkg"instantiate"
 pkg"build"
-if ! Base.isinteractive()
-    branch = ENV["BRANCH"]
-    Pkg.add(PackageSpec(url="https://github.com/sciabarracom/openwhisk-knative-operator#$branch"))
+if length(ARGS) > 0
+    Pkg.add(PackageSpec(url=ARGS[1]))
     using KnativeWhisk
 end
