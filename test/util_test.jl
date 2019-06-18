@@ -2,7 +2,7 @@ using Test
 
 include("../src/util.jl")
 
-@test_logs( 
+@test @test_logs( 
     (:info, "not ready yet, retring in 1 second(s)"),
     (:info, "not ready yet, retring in 1 second(s)"),
 begin
@@ -13,7 +13,7 @@ begin
     end
 end)
 
-@test_logs( 
+@test !@test_logs( 
     (:info, "not ready yet, retring in 1 second(s)"),
     (:info, "not ready yet, retring in 1 second(s)"),
     (:warn, "max retries (2) reached, exiting"),

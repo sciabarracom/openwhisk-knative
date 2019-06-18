@@ -1,6 +1,7 @@
 using Test
-import Base.run
 import Logging
+#import Base.run
+#import Base.read
 
 include("../src/install.jl")
 
@@ -27,7 +28,7 @@ mock_read = ["default\n"]
     (:info, "helm repo add istio.io https://storage.googleapis.com/istio-release/releases/1.1.7/charts/"),
     (:info, "kubectl create namespace istio-system"),
     (:info, "helm fetch istio.io/istio-init --untar"),
-    (:info, "mkdir out"),
+    (:info, "mkdir -p out"),
     (:info, "helm template --name istio-init --namespace istio-system --output-dir out --set gateways.istio-ingressgateway.type=NodePort ./istio-init"),
     (:info, "kubectl apply -f out/istio-init/templates"), 
     install_istio()
@@ -56,3 +57,16 @@ mock_read = ["default\nistio-system\ntekton-pipelines\nknative-serving\n"]
     (:info, "kubectl get ns -o=jsonpath={range .items[*]}{.metadata.name}{\"\\n\"}{end}"),
     (:info, "found namespace tekton-pipelines"),
     install_knative())
+
+mock_read = ["Succeeded\nSucceeded\n"]
+
+@test_logs(
+  (:info, """kubectl -n istio-system get pod -o jsonpath={range .items[*]}{.status.phase}{"\\n"}{end}"""), 
+  check_all_pod_phase("istio-system", "Succeeded"),
+  ) 
+
+@test !check_all_pod_phase("istio-system", "Running")
+@test check_all_pod_phase("istio-system", "Succeeded")
+
+mock_read = [""]
+@test check_all_pod_phase("istio-system", "Succeeded")
