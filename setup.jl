@@ -5,6 +5,7 @@ pkg"activate ."
 pkg"instantiate"
 pkg"build"
 if ! Base.isinteractive()
-    pkg"add https://github.com/sciabarracom/openwhisk-knative-operator#devel"
+    branch = ENV["BRANCH"]
+    Pkg.add("https://github.com/sciabarracom/openwhisk-knative-operator#$branch")
     using KnativeWhisk
 end

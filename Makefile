@@ -1,10 +1,10 @@
 USER=actionloop
 NAME=openwhisk-knative-operator
-VERS=latest
-IMG=$(USER)/$(NAME):$(VERS)
+BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
+IMG=$(USER)/$(NAME):latest
 
 build: setup.jl
-	docker build -t $(IMG) .
+	docker build -t $(IMG) . --build-arg BRANCH=$(BRANCH)
 	docker push $(IMG)
 
 setup.jl: $(find src test -name \*.jl)

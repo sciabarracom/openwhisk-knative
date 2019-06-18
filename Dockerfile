@@ -10,5 +10,5 @@ RUN curl -Ls \
   https://github.com/solo-io/gloo/releases/download/v0.13.29/glooctl-linux-amd64 \
   -o /usr/local/bin/glooctl && chmod +x /usr/local/bin/glooctl
 ADD setup.jl .
-RUN julia setup.jl
+RUN env BRANCH=$BRANCH julia setup.jl
 CMD julia -e 'using Pkg; Pkg.activate("."); using KnativeWhisk'
