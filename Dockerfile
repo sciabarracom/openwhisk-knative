@@ -8,9 +8,6 @@ RUN curl -sL \
 RUN curl -sL \
   https://storage.googleapis.com/kubernetes-helm/helm-v2.14.0-linux-amd64.tar.gz \
   | tar xzvf - linux-amd64/helm --strip-components=1 -C /usr/local/bin
-#RUN curl -Ls \
-#  https://github.com/solo-io/gloo/releases/download/v0.13.29/glooctl-linux-amd64 \
-#  -o /usr/local/bin/glooctl && chmod +x /usr/local/bin/glooctl
 ADD setup.jl .
 RUN julia setup.jl $REPO $BRANCH
-CMD julia -e 'using Pkg; Pkg.activate("."); using KnativeWhisk'
+CMD tail -f /dev/null

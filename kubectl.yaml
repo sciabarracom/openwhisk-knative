@@ -2,15 +2,15 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: kubectl-role
+  name: knative-whisk-role
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: kubectl-role
+  name: knative-whisk-role
 subjects:
 - kind: ServiceAccount
-  name: kubectl-role
+  name: knative-whisk-role
   namespace: default
 roleRef:
   kind: ClusterRole
@@ -20,18 +20,33 @@ roleRef:
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: kubectl
+  name: knative-whisk
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: kubectl
+        app: knative-whisk
     spec:
-      serviceAccountName: kubectl-role
+      serviceAccountName: knative-whisk-role
       containers:
-      - name: kubectl
+      - name: knative-whisk
         imagePullPolicy: Always
-        image: msciab/kubectl
-        command: [ "tail" ]
-        args: [ "-f", "/dev/null" ]
+        image: actionloop/openwhisk-knative-operator
+        command:
+          - tail 
+          - -f
+          - /dev/null
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: knative-whisk-svc
+spec:
+  type: NodePort
+  selector:
+    app: knative-whisk
+  ports:
+  - protocol: TCP
+    port: 30080
+    targetPort: 8000
