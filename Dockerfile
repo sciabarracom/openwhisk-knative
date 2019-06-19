@@ -1,5 +1,6 @@
 FROM julia:1.1.0
 ARG REPO=https://github.com/sciabarracom/openwhisk-knative-operator
+ARG BRANCH=master
 WORKDIR /root
 RUN curl -sL \
  https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl \
@@ -11,5 +12,5 @@ RUN curl -sL \
 #  https://github.com/solo-io/gloo/releases/download/v0.13.29/glooctl-linux-amd64 \
 #  -o /usr/local/bin/glooctl && chmod +x /usr/local/bin/glooctl
 ADD setup.jl .
-RUN julia setup.jl $REPO
+RUN julia setup.jl $REPO $BRANCH
 CMD julia -e 'using Pkg; Pkg.activate("."); using KnativeWhisk'
