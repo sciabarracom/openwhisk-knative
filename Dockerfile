@@ -7,7 +7,9 @@ RUN curl -sL \
  -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
 RUN curl -sL \
   https://storage.googleapis.com/kubernetes-helm/helm-v2.14.0-linux-amd64.tar.gz \
-  | tar xzvf - linux-amd64/helm --strip-components=1 -C /usr/local/bin
+  | tar xzvf - linux-amd64/helm --strip-components=1 \
+  && mv helm /usr/local/bin \
+  && helm init --client-only
 ADD setup.jl .
 RUN julia setup.jl $REPO $BRANCH
 CMD tail -f /dev/null

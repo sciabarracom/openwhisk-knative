@@ -88,6 +88,15 @@ function install_istio(node_type="NodePort")
     end
 end
 
+function kind_exists(kind)
+    try
+        run(`kubectl get $kind`)
+        return true
+    catch
+        return false
+    end
+end
+
 function install_knative_serving()
     if namespace_exists("knative-serving")
         return true
@@ -99,9 +108,13 @@ function install_knative_serving()
 
     cmd = split("kubectl apply $CRD_ONLY -f $SERVING_URL/serving.yaml")
     run_log(`$cmd`)
-    
+   
     retry(100, 10) do
         return count_crd("knative.dev") == 9
+    end
+
+    retry(100, 10) do
+        kind_exists("Image")
     end
     
     cmd = split("kubectl apply -f $SERVING_URL/serving.yaml")
