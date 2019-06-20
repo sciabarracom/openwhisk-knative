@@ -105,21 +105,32 @@ function install_knative_serving()
     SERVING_VERSION="v0.6.0"
     SERVING_URL="https://github.com/knative/serving/releases/download/$SERVING_VERSION"
     CRD_ONLY="--selector knative.dev/crd-install=true"
-
-    cmd = split("kubectl apply $CRD_ONLY -f $SERVING_URL/serving.yaml")
-    run_log(`$cmd`)
-   
-    retry(100, 10) do
-        return count_crd("knative.dev") == 9
+    NO_CERT="--selector networking.knative.dev/certificate-provider!=cert-manager"
+ 
+    retry(10, 1) do
+        try 
+            cmd = split("kubectl apply $CRD_ONLY -f $SERVING_URL/serving.yaml")
+            run_log(`$cmd`)
+            return true
+        catch
+            return false
+        end
     end
-
+  
     retry(100, 10) do
-        kind_exists("Image")
+        return count_crd("istio.io") == 53
+    end
+ 
+    retry(10, 1) do
+        try 
+            cmd = split("kubectl apply $NO_CERT -f $SERVING_URL/serving.yaml")
+            run_log(`$cmd`)
+            return true
+        catch
+            return false
+        end
     end
     
-    cmd = split("kubectl apply -f $SERVING_URL/serving.yaml")
-    run_log(`$cmd`)
-
     retry(100,10) do
        check_all_pod_phase("knative-serving", "Running") 
     end
