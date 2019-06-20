@@ -24,7 +24,7 @@ route("/") do
     Dict("name" => "KnativeWhisk", "version" => "0.0.1") |> json!
 end
 
-function start()
+function start_whisk()
     Genie.config.run_as_server = true
     Genie.config.server_host = "0.0.0.0"
     Genie.startup()
