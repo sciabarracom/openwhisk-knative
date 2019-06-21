@@ -6,4 +6,3 @@ if length(ARGS) > 1
     Pkg.add(PackageSpec(url=ARGS[1], rev=ARGS[2]))
 end
 pkg"build"
-using KnativeWhisk

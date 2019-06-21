@@ -5,6 +5,7 @@ BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 REPO=https://github.com/sciabarracom/openwhisk-knative-operator
 
 build: setup.jl
+	docker rmi -f $(IMG)
 	docker build -t $(IMG) . --build-arg REPO="$(REPO)" --build-arg BRANCH="$(BRANCH)"
 	docker push $(IMG)
 

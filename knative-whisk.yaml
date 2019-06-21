@@ -34,9 +34,9 @@ spec:
         imagePullPolicy: Always
         image: actionloop/openwhisk-knative-operator
         command:
-          - tail 
-          - -f
-          - /dev/null
+          - julia
+          - -e
+          - using KnativeWhisk
 ---
 kind: Service
 apiVersion: v1
