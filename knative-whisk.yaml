@@ -48,5 +48,6 @@ spec:
     app: knative-whisk
   ports:
   - protocol: TCP
-    port: 30080
+    nodePort: 30080
+    port: 8000
     targetPort: 8000

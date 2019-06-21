@@ -1,9 +1,13 @@
 module KnativeWhisk
-using Genie
-export install_knative, start_whisk, install_istio, install_knative_serving, install_tekton
 
 include("install.jl")
-
 include("routes.jl")
+    
+install_knative()
+
+using Genie
+Genie.config.run_as_server = true
+Genie.config.server_host = "0.0.0.0"
+Genie.startup()
 
 end # module
