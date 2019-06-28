@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kaniko-config
+  labels:
+    name: kanico-config
+data:
+  Dockerfile: |
+    FROM ubuntu
+    RUN apt update && apt -y install curl
+    RUN curl -Ls https://julialang-s3.julialang.org/bin/linux/x64/1.0/julia-1.0.4-linux-x86_64.tar.gz \
+    | tar xzvf - -C /usr/local && ln -sf /usr/local/julia-*/bin/julia /usr/bin/julia
+    CMD tail -f /dev/null
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kaniko
+spec:
+  initContainers:
+  - name: kaniko-prep
+    image: busybox:1.28
+    command: ['sh', '-c', 'cp -v /config/* /build/']
+    volumeMounts:
+      - name: build
+        mountPath: /build
+      - name: config
+        mountPath: /config
+  containers:
+  - name: kaniko-build
+    image: gcr.io/kaniko-project/executor:latest
+    args: ["--dockerfile=/build/Dockerfile",
+            "--context=/build",
+            "--destination=register.k8s:5000/demo/julia:latest",
+            "--skip-tls-verify"]
+    volumeMounts:
+      - name: build
+        mountPath: /build
+  restartPolicy: Never
+  hostAliases:
+  - ip: 192.168.64.3
+    hostnames:
+    - "register.k8s"
+  volumes:
+    - name: build
+      emptyDir: {}
+    - name: config
+      configMap:
+        name: kaniko-config
