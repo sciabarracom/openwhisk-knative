@@ -1,0 +1,42 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: git-server
+  namespace: knative-whisk
+  labels:
+    app: git-server
+spec:
+  containers:
+  - name: git-server
+    image: registry.k8s:5000/knative/hellogo:latest
+    ports:
+    - containerPort: 9418
+      name: git-daemon
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: git-server
+  namespace: knative-whisk
+spec:
+  selector:
+    app: git-server
+  ports:
+  - name: git-daemon
+    port: 9418
+    targetPort: 9418
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: git-server-ext
+  namespace: knative-whisk
+spec:
+  type: NodePort
+  selector:
+    app: git-server
+  ports:
+  - name: git-daemon
+    port: 9418
+    nodePort: 30418
