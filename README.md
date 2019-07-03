@@ -8,7 +8,7 @@ It actually uses Knative Serving version 0.6 with Istio and Tekton Pipelines. An
 
 In the current state it has many [limitations](#limitations) See below.
 
-Once you have installed both the cluster and the runtime, you can just do:
+Once you have installed both the kubernetes cluster and the knative-whisk operator and configures your wsk command, you can do:
 
 ```
 $ wsk action create hello hello.js
@@ -20,10 +20,9 @@ It will build and create an action that you can invoke with
 $ wsk action invoke hello 
 ```
 
-It will build and deploy an action
-
 <a name="under-the-hood"></a>
-# How it works
+
+## How it works
 
 When you run an `action create`, you will contact the controller that will gather the image, create a git repository and store the data in it. Then it triggers a Tekton Build.
 
@@ -33,7 +32,7 @@ Once done, it will start the image using Knative Serving.
 
 
 <a name="limitations"></a>
-# Current Limitations
+## Current Limitations
 
 Being mostly a proof-of-concept there are many limitations.
 
@@ -44,7 +43,16 @@ Being mostly a proof-of-concept there are many limitations.
 
 # Installation
 
-[`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and the [`wsk`](https://github.com/apache/incubator-openwhisk-cli/releases).
+Let's see the installation: 
+- installing prerequisites
+- installing a kubernetes cluster
+- installint the knative-whisk operator
+
+## Prerequisites
+
+Install first the command line tools  [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and [`wsk`](https://github.com/apache/incubator-openwhisk-cli/releases).
+
+If you want to install a local develoopment cluster using the provided script below, you need to install [`multipass`](https://github.com/CanonicalLtd/multipass/releases) v0.7.1 or later. 
 
 ## Get a Kubernetes cluster and a Registry
 
@@ -58,7 +66,6 @@ As a prerequisite you need either OSX (tested on High Sierra and Mojave) or Ubun
 
 Since the cluster eats 8 Gb of memory of its own it is unlikely you can run it on a machine with less than 16Gb of RAM.
 
-Before running the script you need to install [`multipass`](https://github.com/CanonicalLtd/multipass/releases) v0.7.1 or later. 
 
 Clone the repository and enter in the setup folder:
 
