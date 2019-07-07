@@ -1,6 +1,4 @@
 using Logging
-using Genie
-import Genie.Renderer: json!
 
 include("util.jl")
 
