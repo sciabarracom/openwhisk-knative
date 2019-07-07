@@ -40,13 +40,11 @@ spec:
       initContainers:
       - name: setup
         imagePullPolicy: Always
-        image: actionloop/openwhisk-knative-operator:latest
-        command: ["julia", "-e", "using KnativeWhisk ; install_knative()"]
+        image: actionloop/openwhisk-knative-operator-init:latest
       containers:
       - name: operator
         imagePullPolicy: Always
         image: actionloop/openwhisk-knative-operator:latest
-        command: ["julia", "-e", "using KnativeWhisk ; start()"]
 ---
 kind: Service
 apiVersion: v1

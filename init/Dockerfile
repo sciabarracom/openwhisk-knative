@@ -10,7 +10,5 @@ RUN curl -sL \
   | tar xzvf - linux-amd64/helm --strip-components=1 \
   && mv helm /usr/local/bin \
   && helm init --client-only
-ADD setup.jl .
-RUN julia setup.jl $REPO $BRANCH
-RUN julia -e 'using KnativeWhisk'
-CMD julia -e 'using KnativeWhisk'
+ADD install.jl installer.jl util.jl /usr/local/bin/
+CMD julia /usr/local/bin/install.jl
