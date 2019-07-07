@@ -1,10 +1,13 @@
 module KnativeWhisk
 
-if haskey(ENV, "INSTALL_KNATIVE_ONLY")    
-    include("install.jl")
+include("install.jl")
+include("routes.jl")
+
+if haskey(ENV, "INSTALL_KNATIVE")    
     install_knative()
-else
-    include("routes.jl")
+end
+
+if haskey(ENV, "START_KNATIVE_WHISK")
     using Genie
     Genie.startup(8000, "0.0.0.0"; async=false)
 end
