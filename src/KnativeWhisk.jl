@@ -4,10 +4,10 @@ include("install.jl")
 include("routes.jl")
 
 using Genie
-Genie.config.run_as_server = true
-Genie.config.server_host = "0.0.0.0"
 
-export startup
+start() = Genie.startup(8000, "0.0.0.0"; async=false)
+
+export start
 export install_knative
 
 end # module
