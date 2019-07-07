@@ -12,4 +12,4 @@ RUN curl -sL \
   && helm init --client-only
 ADD setup.jl .
 RUN julia setup.jl $REPO $BRANCH
-CMD tail -f /dev/null
+CMD julia

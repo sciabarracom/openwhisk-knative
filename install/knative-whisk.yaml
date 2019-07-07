@@ -37,14 +37,16 @@ spec:
         app: knative-whisk-operator
     spec:
       serviceAccountName: knative-whisk-role
+      initContainers:
+      - name: setup
+        imagePullPolicy: Always
+        image: actionloop/openwhisk-knative-operator:devel
+        command: ["julia", "-e", "using KnativeWhisk ; install_knative()"]
       containers:
       - name: operator
         imagePullPolicy: Always
-        image: actionloop/openwhisk-knative-operator
-        command:
-          - julia
-          - -e
-          - using KnativeWhisk
+        image: actionloop/openwhisk-knative-operator:devel
+        command: ["julia", "-e", "using KnativeWhisk ; start()"]
 ---
 kind: Service
 apiVersion: v1

@@ -2,7 +2,7 @@ USER=actionloop
 NAME=openwhisk-knative-operator
 IMG=$(USER)/$(NAME):latest
 BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
-REPO=https://github.com/sciabarracom/openwhisk-knative-operator
+REPO=$(shell git config --get remote.origin.url)
 
 build: setup.jl
 	docker rmi -f $(IMG)
@@ -20,3 +20,4 @@ shell:
 
 run:
 	docker run -p 8000:8000 $(IMG)
+
