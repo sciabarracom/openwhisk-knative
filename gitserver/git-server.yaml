@@ -7,9 +7,12 @@ metadata:
   labels:
     app: git-server
 spec:
+  imagePullSecrets:
+  - name: docker-registry-secret
   containers:
   - name: git-server
     image: registry.k8s:5000/knative/hellogo:latest
+    imagePullPolicy: Always
     ports:
     - containerPort: 9418
       name: git-daemon
