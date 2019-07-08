@@ -37,10 +37,6 @@ spec:
         app: knative-whisk-operator
     spec:
       serviceAccountName: knative-whisk-role
-      initContainers:
-      - name: setup
-        imagePullPolicy: Always
-        image: actionloop/openwhisk-knative-operator-init:latest
       containers:
       - name: operator
         imagePullPolicy: Always

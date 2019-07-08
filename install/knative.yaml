@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: knative-install-role
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: knative-install-role
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: knative-install-role
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: default
+  name: knative-install
+spec:
+  template:
+    spec:
+      serviceAccountName: knative-install-role
+      containers:
+      - name: setup
+        imagePullPolicy: Always
+        image: actionloop/knative-installer:latest
+      restartPolicy: Never
+  backoffLimit: 4

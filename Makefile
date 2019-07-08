@@ -5,15 +5,15 @@ INIT=$(USER)/$(NAME)-init:latest
 BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 REPO=$(shell git config --get remote.origin.url)
 
-build: operator installer
+build: operator init
 
 init: $(find knative test -name \*.jl)
-	docker rmi -f $(INIT)
+	-docker rmi -f $(INIT)
 	docker build -t $(INIT) init
 	docker push $(INIT)
 
 operator: setup.jl
-	docker rmi -f $(OPERATOR)
+	-docker rmi -f $(OPERATOR)
 	docker build -t $(OPERATOR) . --build-arg REPO="$(REPO)" --build-arg BRANCH="$(BRANCH)"
 	docker push $(OPERATOR)
 

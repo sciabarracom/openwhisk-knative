@@ -46,13 +46,14 @@ Being mostly a proof-of-concept there are many limitations.
 Let's see the installation: 
 - installing prerequisites
 - installing a kubernetes cluster
+- installing knative
 - installint the knative-whisk operator
 
 ## Prerequisites
 
 Install first the command line tools  [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and [`wsk`](https://github.com/apache/incubator-openwhisk-cli/releases).
 
-If you want to install a local develoopment cluster using the provided script below, you need to install [`multipass`](https://github.com/CanonicalLtd/multipass/releases) v0.7.1 or later. 
+If you want to install a local development cluster using the provided script below, you need to install [`multipass`](https://github.com/CanonicalLtd/multipass/releases) v0.7.1 or later. 
 
 ## Get a Kubernetes cluster and a Registry
 
@@ -74,13 +75,17 @@ git clone https://github.com/sciabarracom/openwhisk-knative-operator
 cd openwhisk-knative-operator/install
 ```
 
-Run the `kubepass.sh` script to create the cluster and retrieve the configuration:
+Run the `kubepass.sh` script to create the cluster 
+
+```
+bash kubepassh.sh create
+```
+
+It will take a while to complete (up to 10 minutes). Once you have finished you can retrieve the kubernetes configuration file with:
 
 ```
 # optional step to preserve your kubernetes config if any
 mv ~/.kube/config ~/.kube/config.saved
-# now create the cluster
-bash kubepassh.sh create
 bash kubepass.sh config
 ```
 
@@ -94,7 +99,7 @@ kube-node3              Running           192.168.64.5     Ubuntu 18.04 LTS
 kube-master             Running           192.168.64.3     Ubuntu 18.04 LTS
 ```
 
-IPs are assigned by DHCP and may be different. Also note the cluster is not supposed to resist to a reboot so you you have to restart your server you will likely have to destroy the cluster `bash kubepass.sh destroy` and recreate it.
+IPs are assigned by DHCP and may be different. Also note the cluster is not supposed to resist to a reboot so if you have to restart your server you will likely have to destroy the cluster `bash kubepass.sh destroy` and recreate it.
 
 Also check you can connect to the cluster with `kubectl`:
 
@@ -107,9 +112,20 @@ kube-node2    Ready    <none>   118m   v1.14.1
 kube-node3    Ready    <none>   120m   v1.14.1
 ```
 
-## Install Knative-Whisk and dependencies
+## Install Knative
 
-Once you have a Kubernetes cluster and your `kubectl` can control it, apply the configuration with  and wait until istio, knative-serving and tekton are installed:
+Once you have a Kubernetes cluster you need to install Istio, Knative-Serving and Tekton. 
+
+You can do it quickly using the provided `knative.yaml` batch job under `install`.
+
+```
+kubectl apply -f knative.yaml
+kubectl wait --timeout=10m --for=condition=complete job/knative-install
+```
+
+## Install Knative-Whisk 
+
+Once you have a Kubernetes cluster  with Knative and your `kubectl` can control it, apply the configuration:
 
 ```
 kubectl apply -f knative-whisk.yaml
@@ -128,6 +144,7 @@ Then you can setup  `wsk`
 IP=$(multipass list | grep kube-node1 | awk '{ print $3}')
 wsk property set -u 123:453 --apihost http://$IP:30080
 ```
+
 Check it works with:
 
 ```
