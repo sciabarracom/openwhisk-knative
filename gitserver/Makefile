@@ -1,8 +1,8 @@
-REG=registry.k8s:5000
-IMG=$(REG)/knative/hellogo:latest
+REG=registry.k8s
+IMG=$(REG)/git-hellogo-sources:latest
 
 .PHONY: all
-all: secret build deploy
+all: secret build deploy 
 
 .PHONY: deploy
 deploy:
@@ -16,13 +16,17 @@ build:
 
 .PHONY: secret
 secret:
+	-kubectl create ns knative-whisk
 	-kubectl -n knative-whisk delete secret docker-registry-secret
 	kubectl -n knative-whisk create secret docker-registry docker-registry-secret \
-	--docker-server=registry.k8s:5000 \
+	--docker-server=https://registry.k8s \
 	--docker-username=registry \
 	--docker-password=password \
 	--docker-email=knative@openwhisk
 
+proxy:
+	kubectl apply -f registry-proxy.yaml
+
 .PHONY: list
 list:
-	curl  -u registry:password -k https://registry.k8s:5000/v2/_catalog
+	curl  -u registry:password -k https://registry.k8s/v2/_catalog

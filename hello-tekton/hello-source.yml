@@ -1,0 +1,14 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: hello-source
+  namespace: knative-whisk
+spec:
+  type: git
+  params:
+    - name: url
+      value: git://git-server/knative/hellogo
+    - name: revision
+      value: master
+  
+

@@ -1,0 +1,43 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: hello-task
+  namespace: knative-whisk
+spec:
+  inputs:
+    resources:
+      - name: source
+        type: git
+    params:
+    - name: pathToDockerFile
+      description: The path to the dockerfile to build
+      default: /workspace/source/Dockerfile
+    - name: pathToContext
+      description: The build context used by Kaniko (https://github.com/GoogleContainerTools/kaniko#kaniko-build-contexts)
+      default: /workspace/source
+  outputs:
+    resources:
+      - name: image
+        type: image
+  steps:
+  -  name: build-and-push
+     image: gcr.io/kaniko-project/executor:latest
+     command:
+      - /kaniko/executor
+     args:
+     - --dockerfile=${inputs.params.pathToDockerFile}
+     - --destination=${outputs.resources.image.url}
+     - --context=${inputs.params.pathToContext}
+     - --skip-tls-verify
+     volumeMounts:
+     - name: docker-config
+       mountPath: /kaniko/.docker
+  volumes:
+  - name: docker-config
+    projected:
+      sources:
+      - secret:
+         name: docker-registry-secret
+         items:
+         - key: .dockerconfigjson
+           path: config.json
