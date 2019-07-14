@@ -15,7 +15,7 @@ spec:
   - name: docker-registry-secret
   containers:
   - name: git-server
-    image: registry.k8s/git-hellogo-sources:latest
+    image: registry.kube-system/git-hellogo-sources:latest
     imagePullPolicy: Always
     ports:
     - containerPort: 9418

@@ -1,4 +1,4 @@
-REG=registry.k8s
+REG=registry.kube-system
 IMG=$(REG)/git-hellogo-sources:latest
 
 .PHONY: all
@@ -19,7 +19,7 @@ secret:
 	-kubectl create ns knative-whisk
 	-kubectl -n knative-whisk delete secret docker-registry-secret
 	kubectl -n knative-whisk create secret docker-registry docker-registry-secret \
-	--docker-server=https://registry.k8s \
+	--docker-server=https://registry.kube-system \
 	--docker-username=registry \
 	--docker-password=password \
 	--docker-email=knative@openwhisk
