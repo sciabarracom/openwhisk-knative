@@ -1,0 +1,11 @@
+name = "KnativeWhisk"
+uuid = "f3249f74-9210-11e9-1214-bd5bad354a81"
+authors = ["Michele Sciabarra <msciabarra@apache.org>"]
+version = "0.1.0"
+
+[deps]
+Genie = "c43c736e-a2d1-11e8-161f-af95117fbd1e"
+Kuber = "87e52247-8a1b-5e01-9430-8fbcac83a23a"
+Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
+Match = "7eb4fadd-790c-5f42-8a69-bfa0b872bfbf"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
