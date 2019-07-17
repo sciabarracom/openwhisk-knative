@@ -6,7 +6,7 @@ MEM="${3:-2}"
 DISK="${4:-15}"
 VCPU="${5:-1}"
 
-YAML="$(dirname $0)/kubepass.yaml"
+YAML="$(dirname $0)/conf/kubepass.yaml"
 MULTIPASS=multipass
 
 if ! "$MULTIPASS" -h >/dev/null 
@@ -19,12 +19,12 @@ build() {
    COUNT="$1"
    ARGS_MASTER="$2"
    ARGS_WORKERS="$3"
-   if ! test -f $YAML 
+   if ! test -f "$YAML"
    then echo "no $YAML" ; exit 1 
    fi 
-   "$MULTIPASS" launch -n kube-master $ARGS_MASTER --cloud-init $YAML
+   "$MULTIPASS" launch -n kube-master $ARGS_MASTER --cloud-init "$YAML"
    for (( I=1 ; I<= $COUNT; I++))
-   do "$MULTIPASS" launch -n "kube-node$I" $ARGS_WORKERS --cloud-init $YAML
+   do "$MULTIPASS" launch -n "kube-node$I" $ARGS_WORKERS --cloud-init "$YAML"
    done
    "$MULTIPASS" exec kube-master -- cloud-init status --wait 
    "$MULTIPASS" exec kube-master -- wait-ready "$(expr "$COUNT" + 1)"
@@ -52,10 +52,23 @@ are_you_sure() {
    exit 1
 }
 
+config() {
+    if test -f ~/.kube/config
+    then old=~/.kube/config.$(date +"%s") 
+         mv ~/.kube/config "$old"
+         echo "Renamed ~/.kube/config to $old" 
+     fi
+    "$MULTIPASS" exec kube-master -- sudo cat /etc/kubernetes/admin.conf >~/.kube/config
+    if ! kubectl get nodes
+    then echo "please install kubectl"
+    fi
+}
+
 case "$CMD" in
  create) 
    echo "Creating Kubernetes Cluster: master ${MEM}G 2cpu, $NUM workers with ${VCPU} cpu, ${MEM}G mem, ${DISK}G disk"
    build $NUM "-c 2 -d ${DISK}G -m ${MEM}G" "-c $VCPU -d ${DISK}G -m ${MEM}G"
+   config
  ;;
  destroy) 
    echo "Destroying the cluster"
@@ -63,11 +76,7 @@ case "$CMD" in
    destroy $NUM
  ;;
  config)
-    if test -f ~/.kube/config
-    then echo "Overwriting ~/.kube/config"
-         are_you_sure
-    fi
-    "$MULTIPASS" exec kube-master -- sudo cat /etc/kubernetes/admin.conf >~/.kube/config
+    config
  ;;
  nodes) 
    "$MULTIPASS" exec kube-master -- sudo kubectl get nodes 

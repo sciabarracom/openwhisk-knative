@@ -103,8 +103,7 @@ write_files:
         Xdo C="$(sudo kubectl get nodes | awk '$2 == "Ready"' | wc -l)"   
         X   sleep 1
         Xdone
-        Xkill -9 $PID
-        X
+        Xsudo kill -9 $PID 2>/dev/null
         END-of-bin/wait-ready
         echo x - bin/master-init
         sed 's/^X//' >bin/master-init << 'END-of-bin/master-init'
