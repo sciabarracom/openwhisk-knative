@@ -1,0 +1,10 @@
+package models
+
+import "github.com/go-openapi/errors"
+
+// Auth contains authentication informations
+type Auth struct {
+	Username string
+	Password string
+}
+
