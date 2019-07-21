@@ -8,11 +8,14 @@ import (
 )
 
 func ExampleLogIf() {
-	LogIf(nil)
+	fmt.Println(LogIf(nil))
 	err := fmt.Errorf("generated error")
-	LogIf(err)
+	if LogIf(err) {
+		fmt.Println(LastError)
+	}
 	// Output:
-	// WARN: generated error
+	// false
+	// generated error
 }
 
 func shouldPanicRest(flag bool) (resp middleware.Responder) {
@@ -41,10 +44,23 @@ func ExamplePanicIf() {
 	fmt.Println(shouldPanic(true))
 	// Output:
 	// &{501 not panicing map[]}
-	// ERR: I am on panic
 	// &{I am on panic}
 	// no panic
 	// <nil>
-	// ERR: Panic mode
 	// Panic mode
+}
+
+func ExampleSys() {
+	Sys("/bin/echo 1 2 3")
+	Sys("/bin/echo 3", "4", "5")
+	Sys("@sh -c", "echo foo >/tmp/foo")
+	fmt.Print(Sys("cat /tmp/foo"))
+	Sys("@sh -c", "echo bar >/tmp/bar")
+	fmt.Print(Sys("@cat /tmp/bar"))
+	// Output:
+	// 1 2 3
+	// 3 4 5
+	// foo
+	// foo
+	// bar
 }

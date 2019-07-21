@@ -5,7 +5,6 @@ import (
 	middleware "github.com/go-openapi/runtime/middleware"
 
 	//runtime "github.com/go-openapi/runtime"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/go-openapi/loads"
 	"github.com/sciabarracom/openwhisk-knative/controller/gen/models"
@@ -22,9 +21,7 @@ import (
 func Main() {
 	// load embedded swagger file
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
-	if err != nil {
-		log.Fatalln(err)
-	}
+	PanicIf(err)
 
 	// configure APIs
 	api := operations.NewOpenWhiskRESTAPI(swaggerSpec)
@@ -38,11 +35,7 @@ func Main() {
 	server := restapi.NewServer(api)
 	defer server.Shutdown()
 	server.Port = 8080
-
-	// serve API
-	if err := server.Serve(); err != nil {
-		log.Fatalln(err)
-	}
+	PanicIf(server.Serve())
 }
 
 // BasicAuth performs basic authentication
