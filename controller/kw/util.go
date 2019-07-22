@@ -3,6 +3,7 @@ package kw
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"os/exec"
 	"strings"
 
@@ -94,5 +95,17 @@ func Sys(cli string, args ...string) string {
 	if !LogIf(err) && !silent {
 		fmt.Printf(res)
 	}
+	return res
+}
+
+// SysCd works as Sys,
+// but cd into the directory first,
+// and restore the original directory after
+func SysCd(cd string, cli string, args ...string) string {
+	orig, err := os.Getwd()
+	PanicIf(err)
+	PanicIf(os.Chdir(cd))
+	res := Sys(cli, args...)
+	PanicIf(os.Chdir(orig))
 	return res
 }

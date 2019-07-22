@@ -64,3 +64,10 @@ func ExampleSys() {
 	// foo
 	// bar
 }
+
+func ExampleSysCd() {
+	Sys("@mkdir -p /tmp/example-syscd/hello-i-am-a-dir")
+	fmt.Println(SysCd("/tmp/example-syscd", "@ls"))
+	// Output:
+	// hello-i-am-a-dir
+}
