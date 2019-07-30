@@ -1,51 +1,63 @@
 package kw
 
-import "os"
+import (
+	"fmt"
+	"os"
+)
 
 func ExampleNewGitRepo() {
-	os.Setenv("__KW_GIT_REPO", "/tmp/kwrepos")
-	Sys("@rm -rfv /tmp/kwrepos")
-	NewGitRepo("hello")
-	Sys("ls /tmp/kwrepos")
-	NewGitRepo("hello/world")
-	Sys("ls /tmp/kwrepos")
-	Sys("ls /tmp/kwrepos/hello")
-	NewGitRepo("ignore/hello/all")
-	Sys("ls /tmp/kwrepos/hello")
+	Sys("@sh -c", "rm -Rf /tmp/kw && mkdir /tmp/kw")
+	_, err := NewGitRepo("/tmp/kw/hello")
+	Sys("ls /tmp/kw")
+	fmt.Println(err)
+	_, err = NewGitRepo("/tmp/kw/world")
+	Sys("ls /tmp/kw")
+	fmt.Println(err)
+	_, err = NewGitRepo("/tmp/kw/missing/hello")
+	Sys("ls /tmp/kw")
+	fmt.Println(err)
 	// Output:
-	//default
-	// default
+	// hello
+	// <nil>
 	// hello
 	// world
-	// all
+	// <nil>
+	// hello
 	// world
+	// not found parent directory /tmp/kw/missing
 }
 
-func ExampleStore() {
-	os.Setenv("__KW_GIT_REPO", "/tmp/kwrepos")
+func Example_Store() {
 	os.Setenv("LC_ALL", "C")
-	Sys("@rm -rfv /tmp/kwrepos")
-	gr := NewGitRepo("hello/world")
-	gr.Store("hello", []byte("world\n"))
+	Sys("@sh -c", "rm -rfv /tmp/kw && mkdir /tmp/kw")
+	gr, err := NewGitRepo("/tmp/kw/hello")
+	fmt.Println(err)
+	fmt.Println(gr.Store("main", []byte("world\n")))
 	//log.SetLevel(log.TraceLevel)
-	SysCd(gr.Dir, "ls")
-	SysCd(gr.Dir, "cat hello")
-	SysCd(gr.Dir, "git status")
-	gr.Store("hello", []byte("updated world\n"))
-	SysCd(gr.Dir, "ls")
-	SysCd(gr.Dir, "cat hello")
-	SysCd(gr.Dir, "sh -c", "git log --oneline | awk 'END { print NR}'")
+	SysCd(gr.dir, "ls")
+	SysCd(gr.dir, "cat main")
+	SysCd(gr.dir, "git status")
+	gr.Store("main", []byte("updated world\n"))
+	SysCd(gr.dir, "ls")
+	SysCd(gr.dir, "cat main")
+	SysCd(gr.dir, "sh -c", "git log --oneline | awk 'END { print NR}'")
 	gr.Store("Dockerfile", []byte("FROM"))
-	SysCd(gr.Dir, "ls")
+	SysCd(gr.dir, "ls")
 	// Output:
-	// hello
+	// <nil>
+	// <nil>
+	// main
 	// world
 	// On branch master
 	// nothing to commit, working tree clean
-	// hello
+	// main
 	// updated world
 	// 2
 	// Dockerfile
-	// hello
+	// main
+}
 
+func Example_misc() {
+	os.Setenv("LC_ALL", "C")
+	Sys("@sh -c", "rm -rfv /tmp/kw")
 }

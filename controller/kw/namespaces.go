@@ -15,5 +15,5 @@ func ConfigureNamespacesAPI(api *operations.OpenWhiskRESTAPI) {
 
 // GetAllNamespaces does it
 func GetAllNamespaces(params namespaces.GetAllNamespacesParams, principal *models.Auth) middleware.Responder {
-	return namespaces.NewGetAllNamespacesOK().WithPayload([]string{"knative"})
+	return namespaces.NewGetAllNamespacesOK().WithPayload(Manager.ListNamespaces())
 }

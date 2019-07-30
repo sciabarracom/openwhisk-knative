@@ -1,6 +1,8 @@
 package kw
 
 import (
+	"os"
+
 	errors "github.com/go-openapi/errors"
 	middleware "github.com/go-openapi/runtime/middleware"
 
@@ -16,6 +18,18 @@ import (
 	"github.com/sciabarracom/openwhisk-knative/controller/gen/restapi/operations/rules"
 	"github.com/sciabarracom/openwhisk-knative/controller/gen/restapi/operations/triggers"
 )
+
+// Manager manages entities (as folders)
+var Manager *FolderManager
+
+func init() {
+	// managers
+	defaultNamespace := os.Getenv("KW_NAMESPACE")
+	if defaultNamespace == "" {
+		defaultNamespace = "kwhisk"
+	}
+	Manager = NewFolderManager(defaultNamespace)
+}
 
 // Main starts the server
 func Main() {

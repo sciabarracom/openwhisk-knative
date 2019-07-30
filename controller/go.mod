@@ -5,6 +5,7 @@ go 1.12
 require (
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 // indirect
 	github.com/alecthomas/units v0.0.0-20190717042225-c3de453c63f4 // indirect
+	github.com/davecgh/go-spew v1.1.1
 	github.com/gliderlabs/ssh v0.2.2 // indirect
 	github.com/go-openapi/errors v0.19.2
 	github.com/go-openapi/loads v0.19.2
