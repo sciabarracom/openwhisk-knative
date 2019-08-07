@@ -1,6 +1,8 @@
 build:
 	go build main.go
 
+test:
+	go test -v ./kw
 
 .PHONY:
 run:
