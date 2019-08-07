@@ -1,7 +1,7 @@
 package kw
 
 func ExampleNewFolderManager_panic() {
-	SysSh("@rm -Rf /tmp/kw ; touch /tmp/kw")
+	SysSh("@rm -Rf /tmp/kwtest ; touch /tmp/kwtest")
 	capture(func() {
 		NewFolderManager("invalid!")
 	})
@@ -10,73 +10,99 @@ func ExampleNewFolderManager_panic() {
 	})
 	// Output:
 	// capture: invalid namespace
-	// capture: cannot create dir /tmp/kw/repo/kwhisk/default
+	// capture: cannot create dir /tmp/kwtest/kwhisk/default
 }
 
 func ExampleSplitActionName() {
-	SysSh("@rm -Rf /tmp/kw")
+	SysSh("@rm -Rf /tmp/kwtest")
 	fm := NewFolderManager("kwhisk")
-	print(fm.splitActionName("hello"))
-	print(fm.splitActionName("hello/world"))
-	print(fm.splitActionName("michele/hello/world"))
-	print(fm.splitActionName("/michele/hello/world"))
-	print(fm.splitActionName("_/hello/world"))
-	print(fm.splitActionName("/_/hello/world"))
-	print(fm.splitActionName("etc/michele/hello/world"))
-	print(fm.splitActionName("/etc/michele/hello/world"))
-	print(fm.splitActionName("//michele/hello/world"))
-	print(fm.splitActionName("hello!"))
-	print(fm.splitActionName("hello!/world"))
-	print(fm.splitActionName("michele!/hello/world"))
+	show(fm.SplitActionName("hello"))
+	show(fm.SplitActionName("hello/world"))
+	show(fm.SplitActionName("michele/hello/world"))
+	show(fm.SplitActionName("/michele/hello/world"))
+	show(fm.SplitActionName("_/hello/world"))
+	show("---")
+	show(fm.SplitActionName("/hello"))
+	show(fm.SplitActionName("/_/hello"))
+	show(fm.SplitActionName("/_/hello/world"))
+	show("---")
+	show(fm.SplitActionName("etc/michele/hello/world"))
+	show(fm.SplitActionName("/etc/michele/hello/world"))
+	show(fm.SplitActionName("//michele/hello/world"))
+	show("---")
+	show(fm.SplitActionName("hello!"))
+	show(fm.SplitActionName("hello!/world"))
+	show(fm.SplitActionName("michele!/hello/world"))
 	// Output:
 	// kwhisk default hello <nil>
 	// kwhisk hello world <nil>
 	// michele hello world <nil>
 	// michele hello world <nil>
 	// kwhisk hello world <nil>
+	// ---
+	// kwhisk default hello <nil>
+	// kwhisk default hello <nil>
 	// kwhisk hello world <nil>
-	// michele hello world the requested resource was not found
-	// michele hello world the requested resource was not found
-	// michele hello world the requested resource was not found
+	// ---
+	// kwhisk default  action '' contains illegal characters
+	// kwhisk default  action '' contains illegal characters
+	// kwhisk default  action '' contains illegal characters
+	// ---
 	// kwhisk default hello! action 'hello!' contains illegal characters
 	// kwhisk hello! world package 'hello!' contains illegal characters
 	// michele! hello world namespace 'michele!' contains illegal characters
 }
 
 func ExampleFolderManager() {
-	SysSh("@rm -Rf /tmp/kw")
+	SysSh("@rm -Rf /tmp/kwtest")
 	fm := NewFolderManager("kwhisk")
-	print(fm.ListNamespaces())
-	print(fm.ListPackages())
-	fm.UpdatePackage("hello")
-	print(fm.ListPackages())
+	show(fm.ListNamespaces())
+	show(fm.ListPackages())
+	show(fm.DeletePackage("hello"))
+	show(fm.UpdatePackage("hello"))
+	show(fm.ListPackages())
 	fm.UpdatePackage("world")
-	print(fm.ListPackages())
-	print(fm.ListActions(nil))
+	show(fm.ListPackages())
+	show(fm.ListActions(nil))
 	s := "donotexist"
-	print(fm.ListActions(&s))
+	show(fm.ListActions(&s))
 	gr, err := fm.UpdateAction("hello")
-	print(err, gr.dir)
-	print(fm.ListActions(nil))
+	show(err, gr.dir)
+	show(fm.ListActions(nil))
 	gr, err = fm.UpdateAction("hello/world")
-	print(err, gr.dir)
-	print(fm.ListActions(nil))
+	show(err, gr.dir)
+	show(fm.ListActions(nil))
 	fm.UpdateAction("hello/hello")
 	fm.UpdatePackage("world")
 	fm.UpdateAction("world/world")
-	print(fm.ListPackages())
-	print(fm.ListActions(nil))
+	show(fm.ListPackages())
+	show(fm.ListActions(nil))
+	show(fm.DeletePackage("world"))
+	show(fm.DeleteAction("world/hello"))
+	show(fm.DeleteAction("world/world"))
+	show(fm.DeletePackage("world"))
+	show(fm.ListPackages())
+	fm.DeleteAction("hello")
+	show(fm.ListActions(nil))
 	// Output:
 	// [kwhisk]
 	// []
+	// the requested resource does not exists
+	// <nil>
 	// [hello]
 	// [hello world]
 	// []
 	// []
-	// <nil> /tmp/kw/repo/kwhisk/default/hello
-	// [/kwhisk/hello]
-	// <nil> /tmp/kw/repo/kwhisk/hello/world
-	// [/kwhisk/hello /kwhisk/hello/world]
+	// <nil> /tmp/kwtest/kwhisk/default/hello
+	// [/kwhisk/default/hello]
+	// <nil> /tmp/kwtest/kwhisk/hello/world
+	// [/kwhisk/default/hello /kwhisk/hello/world]
 	// [hello world]
-	// [/kwhisk/hello /kwhisk/hello/hello /kwhisk/hello/world /kwhisk/world/world]
+	// [/kwhisk/default/hello /kwhisk/hello/hello /kwhisk/hello/world /kwhisk/world/world]
+	// package not empty
+	// the requested resource does not exists
+	// <nil>
+	// <nil>
+	// [hello]
+	// [/kwhisk/hello/hello /kwhisk/hello/world]
 }

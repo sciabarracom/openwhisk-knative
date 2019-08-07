@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // FolderManager manage folders
@@ -22,8 +24,9 @@ type FolderManager struct {
 func NewFolderManager(defaultNamespace string) *FolderManager {
 	baseDir := os.Getenv("KW_REPO")
 	if baseDir == "" {
-		baseDir = "/tmp/kw/repo"
+		baseDir = "/var/lib/kwhisk"
 	}
+	log.Info("base directory ", baseDir)
 	if !ValidateURLPathComponent(defaultNamespace) {
 		panic("invalid namespace")
 	}
@@ -32,6 +35,7 @@ func NewFolderManager(defaultNamespace string) *FolderManager {
 	if err := os.MkdirAll(path, 0755); err != nil {
 		panic("cannot create dir " + path)
 	}
+	log.Info("created ", path)
 	return &FolderManager{baseDir, defaultNamespace}
 }
 
@@ -44,7 +48,7 @@ func (fm *FolderManager) ListNamespaces() []string {
 func (fm *FolderManager) ListPackages() []string {
 	dir := filepath.Join(fm.baseDir, fm.Namespace)
 	infos, err := ioutil.ReadDir(dir)
-	PanicIf(err)
+	FatalIf(err)
 	res := []string{}
 	for _, info := range infos {
 		if info.IsDir() && info.Name() != "default" {
@@ -88,11 +92,8 @@ func (fm *FolderManager) ListActions(packge *string) []string {
 		for _, info := range infos {
 			if info.IsDir() {
 				var name string
-				if packge == "default" {
-					name = fmt.Sprintf("/%s/%s", fm.Namespace, info.Name())
-				} else {
-					name = fmt.Sprintf("/%s/%s/%s", fm.Namespace, packge, info.Name())
-				}
+				name = fmt.Sprintf("/%s/%s/%s",
+					fm.Namespace, packge, info.Name())
 				result = append(result, name)
 			}
 		}
@@ -101,23 +102,40 @@ func (fm *FolderManager) ListActions(packge *string) []string {
 	return result
 }
 
-// splitActionName splits action name in components
-func (fm *FolderManager) splitActionName(actionName string) (namespace string, packge string, action string, err error) {
+// SplitActionName splits action name in components
+func (fm *FolderManager) SplitActionName(actionName string) (namespace string, packge string, action string, err error) {
 	namespace = fm.Namespace
 	packge = "default"
 	err = nil
 	a := strings.Split(actionName, "/")
-	switch n := len(a); n {
-	case 1:
-		action = a[0]
-	case 2:
-		packge = a[0]
-		action = a[1]
-	default:
-		namespace = a[n-3]
-		packge = a[n-2]
-		action = a[n-1]
-		if (n == 4 && a[0] != "") || n > 4 {
+	n := len(a)
+
+	if strings.HasPrefix(actionName, "/") {
+		switch n {
+		case 2:
+			action = a[1]
+		case 3:
+			namespace = a[1]
+			action = a[2]
+		case 4:
+			namespace = a[1]
+			packge = a[2]
+			action = a[3]
+		default:
+			err = errors.New("the requested resource was not found")
+		}
+	} else {
+		switch n {
+		case 1:
+			action = a[0]
+		case 2:
+			packge = a[0]
+			action = a[1]
+		case 3:
+			namespace = a[n-3]
+			packge = a[n-2]
+			action = a[n-1]
+		default:
 			err = errors.New("the requested resource was not found")
 		}
 	}
@@ -141,14 +159,44 @@ func (fm *FolderManager) splitActionName(actionName string) (namespace string, p
 // the action name can optionallu include the package name that defaults to "default"
 // and the namespace that defaults to the default namespace
 func (fm *FolderManager) UpdateAction(name string) (*GitRepo, error) {
-	namespace, packge, action, err := fm.splitActionName(name)
+	namespace, packge, action, err := fm.SplitActionName(name)
 	if err != nil {
 		return nil, err
 	}
 	pkgDir := filepath.Join(fm.baseDir, namespace, packge)
 	if _, err := os.Stat(pkgDir); err != nil {
-		return nil, fmt.Errorf("packge %s in namespace %s not found", packge, namespace)
+		return nil, fmt.Errorf("package %s in namespace %s not found", packge, namespace)
 	}
 	actionDir := filepath.Join(pkgDir, action)
 	return NewGitRepo(actionDir)
+}
+
+// DeletePackage delete a package
+func (fm *FolderManager) DeletePackage(name string) error {
+	dir := filepath.Join(fm.baseDir, fm.Namespace, name)
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		return errors.New("the requested resource does not exists")
+	}
+	empty, err := IsDirEmpty(dir)
+	if err != nil {
+		return err
+	}
+	if empty {
+		return os.Remove(dir)
+	}
+	return errors.New("package not empty")
+}
+
+// DeleteAction delete an action
+func (fm *FolderManager) DeleteAction(name string) error {
+	namespace, packge, action, err := fm.SplitActionName(name)
+	if err != nil {
+		return err
+	}
+	dir := filepath.Join(fm.baseDir, namespace, packge, action)
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		return errors.New("the requested resource does not exists")
+	}
+	return os.RemoveAll(dir)
+
 }

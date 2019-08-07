@@ -2,6 +2,7 @@ package kw
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"regexp"
 	"strings"
@@ -21,11 +22,11 @@ var sp spew.ConfigState = spew.ConfigState{
 	DisableMethods:          true,
 }
 
-func print(args ...interface{}) {
+func show(args ...interface{}) {
 	fmt.Println(args...)
 }
 
-func printf(format string, args ...interface{}) {
+func showf(format string, args ...interface{}) {
 	fmt.Printf(format+"\\n", args...)
 }
 
@@ -33,13 +34,24 @@ func dump(args ...interface{}) {
 	sp.Dump(args...)
 }
 
+func fdump(filenames ...string) {
+	for _, filename := range filenames {
+		buf, err := ioutil.ReadFile(filename)
+		if err == nil {
+			show(string(buf))
+		} else {
+			show(err)
+		}
+	}
+}
+
 func grep(search string, data ...interface{}) {
 	re := regexp.MustCompile(search)
 	lines := strings.Split(sp.Sdump(data...), "\n")
 	for _, line := range lines {
-		//print(line)
+		//show(line)
 		if re.Match([]byte(line)) {
-			print(strings.TrimSpace(line))
+			show(strings.TrimSpace(line))
 		}
 	}
 }
@@ -49,7 +61,7 @@ type recovering func()
 func capture(fn recovering) {
 	defer func() {
 		if r := recover(); r != nil {
-			print("capture:", r)
+			show("capture:", r)
 		}
 	}()
 	fn()
@@ -72,6 +84,8 @@ func traceOff() {
 }
 
 func TestMain(m *testing.M) {
+	// use kwtest
+	os.Setenv("KW_REPO", "/tmp/kwtest")
 	// call flag.Parse() here if TestMain uses flags
 	log.SetOutput(os.Stderr)
 	log.SetFormatter(&log.TextFormatter{

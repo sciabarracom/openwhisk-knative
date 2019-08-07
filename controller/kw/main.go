@@ -35,7 +35,7 @@ func init() {
 func Main() {
 	// load embedded swagger file
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
-	PanicIf(err)
+	FatalIf(err)
 
 	// configure APIs
 	api := operations.NewOpenWhiskRESTAPI(swaggerSpec)
@@ -49,7 +49,7 @@ func Main() {
 	server := restapi.NewServer(api)
 	defer server.Shutdown()
 	server.Port = 8080
-	PanicIf(server.Serve())
+	FatalIf(server.Serve())
 }
 
 // BasicAuth performs basic authentication
@@ -76,20 +76,10 @@ func ConfigureUnimplementedAPI(api *operations.OpenWhiskRESTAPI) {
 	api.ActionsPutWebNamespacePackageNameActionNameExtensionHandler = actions.PutWebNamespacePackageNameActionNameExtensionHandlerFunc(func(params actions.PutWebNamespacePackageNameActionNameExtensionParams, principal *models.Auth) middleware.Responder {
 		return middleware.NotImplemented("operation actions.PutWebNamespacePackageNameActionNameExtension has not yet been implemented")
 	})
-	api.ActionsDeleteActionHandler = actions.DeleteActionHandlerFunc(func(params actions.DeleteActionParams, principal *models.Auth) middleware.Responder {
-		return middleware.NotImplemented("operation actions.DeleteAction has not yet been implemented")
-	})
-	api.ActionsDeleteActionInPackageHandler = actions.DeleteActionInPackageHandlerFunc(func(params actions.DeleteActionInPackageParams, principal *models.Auth) middleware.Responder {
-		return middleware.NotImplemented("operation actions.DeleteActionInPackage has not yet been implemented")
-	})
-	api.PackagesDeletePackageHandler = packages.DeletePackageHandlerFunc(func(params packages.DeletePackageParams, principal *models.Auth) middleware.Responder {
-		return middleware.NotImplemented("operation packages.DeletePackage has not yet been implemented")
-	})
 
 	api.RulesDeleteRuleHandler = rules.DeleteRuleHandlerFunc(func(params rules.DeleteRuleParams, principal *models.Auth) middleware.Responder {
 		return middleware.NotImplemented("operation rules.DeleteRule has not yet been implemented")
 	})
-
 	api.TriggersDeleteTriggerHandler = triggers.DeleteTriggerHandlerFunc(func(params triggers.DeleteTriggerParams, principal *models.Auth) middleware.Responder {
 		return middleware.NotImplemented("operation triggers.DeleteTrigger has not yet been implemented")
 	})
@@ -137,9 +127,6 @@ func ConfigureUnimplementedAPI(api *operations.OpenWhiskRESTAPI) {
 	})
 	api.RulesSetStateHandler = rules.SetStateHandlerFunc(func(params rules.SetStateParams, principal *models.Auth) middleware.Responder {
 		return middleware.NotImplemented("operation rules.SetState has not yet been implemented")
-	})
-	api.ActionsUpdateActionInPackageHandler = actions.UpdateActionInPackageHandlerFunc(func(params actions.UpdateActionInPackageParams, principal *models.Auth) middleware.Responder {
-		return middleware.NotImplemented("operation actions.UpdateActionInPackage has not yet been implemented")
 	})
 	api.RulesUpdateRuleHandler = rules.UpdateRuleHandlerFunc(func(params rules.UpdateRuleParams, principal *models.Auth) middleware.Responder {
 		return middleware.NotImplemented("operation rules.UpdateRule has not yet been implemented")

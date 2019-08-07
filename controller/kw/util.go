@@ -1,25 +1,19 @@
 package kw
 
 import (
-	"crypto/md5"
 	"fmt"
-	"net/http"
 	"os"
 	"os/exec"
-	"regexp"
 	"strings"
 
-	"github.com/go-openapi/runtime"
-	middleware "github.com/go-openapi/runtime/middleware"
-	"github.com/sciabarracom/openwhisk-knative/controller/gen/models"
 	log "github.com/sirupsen/logrus"
 )
 
 // LastError seen
 var LastError error
 
-// PanicIf panics if error is not nil
-func PanicIf(err error) {
+// FatalIf panics if error is not nil
+func FatalIf(err error) {
 	LastError = err
 	if err != nil {
 		log.Error(err)
@@ -50,28 +44,6 @@ func Recover(perr *error) {
 			*perr = fmt.Errorf("%v", v)
 		}
 	}
-}
-
-// RecoverRest recovers from a panic returning a rest error response
-func RecoverRest(resp *middleware.Responder) {
-	if r := recover(); r != nil {
-		switch v := r.(type) {
-		case error:
-			*resp = &panicResp{v.Error()}
-		default:
-			*resp = &panicResp{r}
-		}
-	}
-}
-
-/// support code for RecoverRest
-type panicResp struct {
-	response interface{}
-}
-
-func (p *panicResp) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
-	rw.WriteHeader(http.StatusInternalServerError)
-	LogIf(producer.Produce(rw, p.response))
 }
 
 // Sys executes a command in a convenient way:
@@ -105,10 +77,10 @@ func Sys(cli string, args ...string) string {
 // and restore the original directory after.
 func SysCd(cd string, cli string, args ...string) string {
 	orig, err := os.Getwd()
-	PanicIf(err)
-	PanicIf(os.Chdir(cd))
+	FatalIf(err)
+	FatalIf(os.Chdir(cd))
 	res := Sys(cli, args...)
-	PanicIf(os.Chdir(orig))
+	FatalIf(os.Chdir(orig))
 	return res
 }
 
@@ -120,20 +92,4 @@ func SysSh(cmd string) string {
 		return Sys("@sh -c", strings.TrimPrefix(cmd, "@"))
 	}
 	return Sys("sh -c", cmd)
-}
-
-// ValidateURLPathComponent checks if a string is a valid path component
-func ValidateURLPathComponent(urlComponent string) bool {
-	var check = regexp.MustCompile(`^[[:word:]-.~]+$`)
-	return check.MatchString(urlComponent)
-}
-
-// MkErr builds an error
-func MkErr(err error) *models.ErrorMessage {
-	msg := err.Error()
-	hash := fmt.Sprintf("%x", md5.Sum([]byte(msg)))
-	return &models.ErrorMessage{
-		Code:  hash,
-		Error: &msg,
-	}
 }

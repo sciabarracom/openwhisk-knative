@@ -5,7 +5,7 @@ import (
 )
 
 func ExampleGetAllNamespaces() {
-	print(GetAllNamespaces(namespaces.GetAllNamespacesParams{}, nil))
+	show(GetAllNamespaces(namespaces.GetAllNamespacesParams{}, nil))
 	// Output:
 	// &{[kwhisk]}
 }

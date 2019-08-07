@@ -10,10 +10,10 @@ import (
 // ConfigureNamespacesAPI does it
 func ConfigureNamespacesAPI(api *operations.OpenWhiskRESTAPI) {
 	api.NamespacesGetAllNamespacesHandler = namespaces.GetAllNamespacesHandlerFunc(GetAllNamespaces)
-
 }
 
 // GetAllNamespaces does it
-func GetAllNamespaces(params namespaces.GetAllNamespacesParams, principal *models.Auth) middleware.Responder {
+func GetAllNamespaces(params namespaces.GetAllNamespacesParams, principal *models.Auth) (resp middleware.Responder) {
+	defer RecoverRest(&resp)
 	return namespaces.NewGetAllNamespacesOK().WithPayload(Manager.ListNamespaces())
 }

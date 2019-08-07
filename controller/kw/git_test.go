@@ -6,15 +6,15 @@ import (
 )
 
 func ExampleNewGitRepo() {
-	Sys("@sh -c", "rm -Rf /tmp/kw && mkdir /tmp/kw")
-	_, err := NewGitRepo("/tmp/kw/hello")
-	Sys("ls /tmp/kw")
+	Sys("@sh -c", "rm -Rf /tmp/kwgit && mkdir /tmp/kwgit")
+	_, err := NewGitRepo("/tmp/kwgit/hello")
+	Sys("ls /tmp/kwgit")
 	fmt.Println(err)
-	_, err = NewGitRepo("/tmp/kw/world")
-	Sys("ls /tmp/kw")
+	_, err = NewGitRepo("/tmp/kwgit/world")
+	Sys("ls /tmp/kwgit")
 	fmt.Println(err)
-	_, err = NewGitRepo("/tmp/kw/missing/hello")
-	Sys("ls /tmp/kw")
+	_, err = NewGitRepo("/tmp/kwgit/missing/hello")
+	Sys("ls /tmp/kwgit")
 	fmt.Println(err)
 	// Output:
 	// hello
@@ -24,13 +24,13 @@ func ExampleNewGitRepo() {
 	// <nil>
 	// hello
 	// world
-	// not found parent directory /tmp/kw/missing
+	// not found parent directory /tmp/kwgit/missing
 }
 
 func Example_Store() {
 	os.Setenv("LC_ALL", "C")
-	Sys("@sh -c", "rm -rfv /tmp/kw && mkdir /tmp/kw")
-	gr, err := NewGitRepo("/tmp/kw/hello")
+	Sys("@sh -c", "rm -rfv /tmp/kwgit && mkdir /tmp/kwgit")
+	gr, err := NewGitRepo("/tmp/kwgit/hello")
 	fmt.Println(err)
 	fmt.Println(gr.Store("main", []byte("world\n")))
 	//log.SetLevel(log.TraceLevel)
@@ -59,5 +59,5 @@ func Example_Store() {
 
 func Example_misc() {
 	os.Setenv("LC_ALL", "C")
-	Sys("@sh -c", "rm -rfv /tmp/kw")
+	Sys("@sh -c", "rm -rfv /tmp/kwgit")
 }

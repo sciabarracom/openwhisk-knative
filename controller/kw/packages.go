@@ -11,10 +11,12 @@ import (
 func ConfigurePackagesAPI(api *operations.OpenWhiskRESTAPI) {
 	api.PackagesGetAllPackagesHandler = packages.GetAllPackagesHandlerFunc(GetAllPackages)
 	api.PackagesUpdatePackageHandler = packages.UpdatePackageHandlerFunc(UpdatePackage)
+	api.PackagesDeletePackageHandler = packages.DeletePackageHandlerFunc(DeletePackage)
 }
 
 // GetAllPackages does it
-func GetAllPackages(params packages.GetAllPackagesParams, principal *models.Auth) middleware.Responder {
+func GetAllPackages(params packages.GetAllPackagesParams, principal *models.Auth) (resp middleware.Responder) {
+	defer RecoverRest(&resp)
 	payload := []*models.Package{}
 	for _, packge := range Manager.ListPackages() {
 		//log.Debug(packge)
@@ -28,7 +30,8 @@ func GetAllPackages(params packages.GetAllPackagesParams, principal *models.Auth
 }
 
 // UpdatePackage does it
-func UpdatePackage(params packages.UpdatePackageParams, principal *models.Auth) middleware.Responder {
+func UpdatePackage(params packages.UpdatePackageParams, principal *models.Auth) (resp middleware.Responder) {
+	defer RecoverRest(&resp)
 	err := Manager.UpdatePackage(params.PackageName)
 	if err != nil {
 		return packages.NewUpdatePackageBadRequest().WithPayload(MkErr(err))
@@ -37,4 +40,14 @@ func UpdatePackage(params packages.UpdatePackageParams, principal *models.Auth) 
 		Name:      &params.PackageName,
 		Namespace: &Manager.Namespace,
 	})
+}
+
+// DeletePackage does it
+func DeletePackage(params packages.DeletePackageParams, principal *models.Auth) (resp middleware.Responder) {
+	defer RecoverRest(&resp)
+	err := Manager.DeletePackage(params.PackageName)
+	if err != nil {
+		return packages.NewDeletePackageConflict().WithPayload(MkErr(err))
+	}
+	return packages.NewDeletePackageOK()
 }
