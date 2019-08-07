@@ -1,0 +1,26 @@
+language: go
+
+env:
+  - GO111MODULE=on GOPATH=/home/travis/gopath/.cache
+
+cache:
+  directories:
+    - /home/travis/gopath/.cache
+
+go_import_path: github.com/sciabarracom/openwhisk-knative
+sudo: false
+
+stages:
+  - name: Build controller
+  - name: Run controller tests
+
+jobs:
+  include:
+    - stage: Build controller
+      script:
+        - cd controller 
+        - make build
+    - stage: Run controller tests
+      script:
+        - cd controller 
+        - make test
