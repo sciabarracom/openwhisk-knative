@@ -1,7 +1,6 @@
 build:
 	go build main.go
 
-
 .PHONY:
 run:
 	go run main.go
@@ -12,7 +11,6 @@ gen:
 	swagger generate server -f apiv1swagger.json -t gen -P models.Auth --exclude-main 
 	cp auth.src gen/models/auth.go
 	
-
 .PHONY: clean
 clean:
 	rm -Rvf gen
