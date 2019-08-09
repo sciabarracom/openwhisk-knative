@@ -1,5 +1,5 @@
-build:
-	go build main.go
+USER=actionloop
+IMAGE=docker.io/$(USER)/kwhisk-controller
 
 .PHONY:
 run:
@@ -13,6 +13,18 @@ gen:
 	
 .PHONY: clean
 clean:
-	rm -Rvf gen
+	-rm -Rvf gen
+	-rm controller
 
-#-P knativewhisk.auth.Auth -t ./gen 
+
+.PHONY: image
+image: controller
+	docker build . -t  $(IMAGE)
+
+.PHONY: push
+push: image
+	docker login
+	docker push $(IMAGE)
+
+controller:
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build . 
