@@ -45,6 +45,10 @@ func UpdateAction(params actions.UpdateActionParams, principal *models.Auth) (re
 	if err != nil {
 		return actions.NewUpdateActionBadRequest().WithPayload(MkErr(err))
 	}
+	err = git.Store("Dockerfile", Dockerfile())
+	if err != nil {
+		return actions.NewUpdateActionBadRequest().WithPayload(MkErr(err))
+	}
 	res := &models.Action{
 		Name:      &params.ActionName,
 		Namespace: &params.Namespace,
@@ -65,6 +69,10 @@ func UpdateActionInPackage(params actions.UpdateActionInPackageParams, principal
 	err = git.Store("src", []byte(params.Action.Exec.Code))
 	if err != nil {
 		return actions.NewUpdateActionInPackageBadRequest().WithPayload(MkErr(err))
+	}
+	err = git.Store("Dockerfile", Dockerfile())
+	if err != nil {
+		return actions.NewUpdateActionBadRequest().WithPayload(MkErr(err))
 	}
 	actionName := params.PackageName + "/" + params.ActionName
 	res := &models.Action{

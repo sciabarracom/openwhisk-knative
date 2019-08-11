@@ -7,7 +7,7 @@ if ! kubectl get nodes
 then echo "configure access to a kubernetes cluster please" ; exit 1
 fi 
 kubectl apply -f "$CONF"
-echo "*** Waiting for knative installation to complete..."
+kubectl logs -f $(kubectl get po | grep knative-install | awk '{ print $1}') &
 kubectl wait --timeout=10m --for=condition=complete job/knative-install
 echo "*** Namespaces:"
 kubectl get ns

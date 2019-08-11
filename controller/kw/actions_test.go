@@ -56,11 +56,14 @@ func ExampleUpdateAction() {
 	params.Namespace = "_"
 	grep("Name(space)?:", UpdateAction(params, nil))
 	fdump("/tmp/kwtest/kwhisk/default/hello/src")
+	Sys("ls /tmp/kwtest/kwhisk/default/hello")
 	// Output:
 	// Error: (*string)((len=41) "action 'bad!' contains illegal characters")
 	// Name: (*string)((len=5) "hello"),
 	// Namespace: (*string)((len=1) "_"),
 	// action body
+	// Dockerfile
+	// src
 }
 
 func ExampleUpdateActionInPackage() {
@@ -82,11 +85,14 @@ func ExampleUpdateActionInPackage() {
 	Manager.UpdatePackage("hello")
 	grep("Name:", UpdateActionInPackage(params, nil))
 	fdump("/tmp/kwtest/kwhisk/hello/world/src")
+	Sys("ls /tmp/kwtest/kwhisk/hello/world")
 	// Output:
 	// Error: (*string)((len=41) "action 'bad!' contains illegal characters")
 	// Error: (*string)((len=43) "package hello in namespace kwhisk not found")
 	// Name: (*string)((len=11) "hello/world"),
 	// hello world body
+	// Dockerfile
+	// src
 }
 
 func ExampleDeleteAction() {

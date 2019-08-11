@@ -2,11 +2,11 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: git-server
+  name: kwhisk-git-server
   namespace: knative-whisk
 spec:
   selector:
-    app: git-server
+    app: controller
   ports:
   - name: git-daemon
     port: 9418
@@ -16,7 +16,7 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: git-server-ext
+  name: kwhisk-git-server-ext
   namespace: knative-whisk
 spec:
   type: NodePort
