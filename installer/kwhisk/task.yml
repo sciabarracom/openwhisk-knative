@@ -17,7 +17,7 @@ spec:
       default: /workspace/source
   outputs:
     resources:
-      - name: image
+      - name: target
         type: image
   steps:
   -  name: build-and-push
@@ -26,7 +26,7 @@ spec:
       - /kaniko/executor
      args:
      - --dockerfile=${inputs.params.pathToDockerFile}
-     - --destination=${outputs.resources.image.url}
+     - --destination=${outputs.resources.target.url}
      - --context=${inputs.params.pathToContext}
      - --skip-tls-verify
      volumeMounts:
