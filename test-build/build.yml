@@ -16,7 +16,7 @@ spec:
           value: git://kwhisk-git-server/kwhisk/hello/world
   outputs:
     resources:
-    - name: image
+    - name: target
       resourceSpec:
         type: image
         params:
