@@ -1,4 +1,4 @@
-# OpenWhisk Knative 
+# OpenWhisk Knative
 
 Warning: this is still work in progress.
 
@@ -10,14 +10,14 @@ In the current state it has many [limitations](#limitations) See below.
 
 Once you have installed both the Kubernetes cluster and the knative-whisk operator and configures your wsk command, you can do:
 
-```
+``` bash
 $ wsk action create hello hello.js
 ```
 
 It will build and create an action that you can invoke with
 
 ```
-$ wsk action invoke hello 
+$ wsk action invoke hello
 ```
 
 <a name="under-the-hood"></a>
@@ -41,7 +41,8 @@ Being mostly a proof-of-concept there are many limitations.
 
 # Installation
 
-Let's see the installation: 
+Let's see the installation:
+
 - installing prerequisites
 - installing a kubernetes cluster
 - installing knative
@@ -136,8 +137,7 @@ kubectl wait --timeout=10m --for=condition=complete job/knative-install
 
 After the installation you should see the namespaces `istio-system`, `knative-serving` and `tekton-pipelines` when listing with `kubectl get ns`.
 
-
-## Install Knative-Whisk 
+## Install Knative-Whisk
 
 Once you have a Kubernetes cluster  with Knative and your `kubectl` can control it, apply the configuration:
 
