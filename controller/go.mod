@@ -14,9 +14,11 @@ require (
 	github.com/go-openapi/strfmt v0.19.2
 	github.com/go-openapi/swag v0.19.4
 	github.com/go-openapi/validate v0.19.2
+	github.com/gogo/protobuf v1.1.1 // indirect
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/kevinburke/ssh_config v0.0.0-20190630040420-2e50c441276c // indirect
 	github.com/kr/pty v1.1.8 // indirect
+	github.com/mitchellh/go-homedir v1.1.0
 	github.com/prometheus/common v0.6.0
 	github.com/sirupsen/logrus v1.4.2
 	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4 // indirect
@@ -25,4 +27,6 @@ require (
 	golang.org/x/tools v0.0.0-20190719005602-e377ae9d6386 // indirect
 	gopkg.in/src-d/go-billy.v4 v4.3.1 // indirect
 	gopkg.in/src-d/go-git.v4 v4.12.0
+	k8s.io/apimachinery v0.0.0-20190612205821-1799e75a0719
+	k8s.io/client-go v0.0.0-20190620085101-78d2af792bab
 )

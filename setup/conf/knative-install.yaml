@@ -25,6 +25,9 @@ metadata:
   name: knative-install
 spec:
   template:
+    metadata:
+      labels:
+        app: knative-install
     spec:
       serviceAccountName: knative-install-role
       containers:

@@ -7,7 +7,13 @@ if ! kubectl get nodes
 then echo "configure access to a kubernetes cluster please" ; exit 1
 fi 
 kubectl apply -f "$CONF"
-kubectl logs -f $(kubectl get po | grep knative-install | awk '{ print $1}') &
+while true 
+do POD="$(kubectl get po -l app=knative-install -o jsonpath="{.items[0].metadata.name}")"
+   test -z "$POD" || break
+   sleep 1
+done
+echo "*** $POD ***"
+kubectl logs $POD -f &
 kubectl wait --timeout=10m --for=condition=complete job/knative-install
 echo "*** Namespaces:"
 kubectl get ns
