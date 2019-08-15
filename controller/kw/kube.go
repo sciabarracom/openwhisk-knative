@@ -47,3 +47,6 @@ func (k *Kube) ListNamespaces() []string {
 	}
 	return res
 }
+
+
+func
