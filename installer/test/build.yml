@@ -1,0 +1,25 @@
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: build-hello-world-7
+  namespace: knative-whisk
+spec:
+  taskRef:
+    name: kwhisk-builder
+  inputs:
+    resources:
+    - name: source
+      resourceSpec:
+        type: git
+        params:
+        - name: url
+          value: git://kwhisk-git-server/kwhisk/hello/world
+  outputs:
+    resources:
+    - name: target
+      resourceSpec:
+        type: image
+        params:
+        - name: url
+          value: registry.kube-system/kwhisk/hello/world/7
+

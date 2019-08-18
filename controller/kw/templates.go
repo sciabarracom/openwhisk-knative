@@ -12,9 +12,8 @@ ENV OW_AUTOINIT_MAIN=main
 `)
 }
 
-func build(name, source, target string) []byte {
-	return []byte(fmt.Sprintf(`apiVersion: 
-tekton.dev/v1alpha1
+func build(name, source, target string) string {
+	return fmt.Sprintf(`apiVersion: tekton.dev/v1alpha1
 kind: TaskRun
 metadata:
   name: %s
@@ -38,6 +37,6 @@ spec:
         params:
         - name: url
           value: %s
-`, name, source, target))
+`, name, source, target)
 
 }

@@ -22,6 +22,7 @@ spec:
   steps:
   -  name: build-and-push
      image: gcr.io/kaniko-project/executor:latest
+     imagePullPolicy: IfNotPresent
      command:
       - /kaniko/executor
      args:
@@ -29,10 +30,20 @@ spec:
      - --destination=${outputs.resources.target.url}
      - --context=${inputs.params.pathToContext}
      - --skip-tls-verify
+     - --cache=true
+     - --cache-dir=/cache
+     - --cache-ttl=6h
+     - --single-snapshot
      volumeMounts:
-     - name: docker-config
-       mountPath: /kaniko/.docker
+      - name: cache
+        mountPath: "/cache"
+      - name: docker-config
+        mountPath: /kaniko/.docker
   volumes:
+  - name: cache
+    persistentVolumeClaim:
+      claimName: kaniko-cache-pvc
+  
   - name: docker-config
     projected:
       sources:

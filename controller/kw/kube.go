@@ -6,6 +6,7 @@ import (
 
 	homedir "github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
+	tekton "github.com/tektoncd/pipeline/pkg/client/listers/pipeline/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/kubernetes"
@@ -32,6 +33,7 @@ func NewKube() *Kube {
 	}
 	FatalIf(err)
 	kubeClient, err := kubernetes.NewForConfig(kubeConfig)
+	
 	FatalIf(err)
 	return &Kube{
 		Config: kubeConfig,
@@ -49,7 +51,6 @@ func parseK8sYaml(fileAsString string) []runtime.Object {
 			// ignore empty cases
 			continue
 		}
-
 		decode := scheme.Codecs.UniversalDeserializer().Decode
 		obj, groupVersionKind, err := decode([]byte(f), nil, nil)
 
@@ -81,4 +82,26 @@ func (k *Kube) ListNamespaces() []string {
 		res = append(res, ns.Name)
 	}
 	return res
+}
+
+// Apply the descriptor
+func (k *Kube) Apply(yaml string) {
+	//cv1 := k.Client.CoreV1()
+	for _, obj := range parseK8sYaml(yaml) {
+		ver, kind := obj.GetObjectKind().GroupVersionKind().ToAPIVersionAndKind()
+		fmt.Println(kind, ver)
+		switch ver {
+		case "v1":
+			switch kind {
+			case "Namespace":
+				//cv1.Namespaces().Update(&v1.Namespace{})
+				//cv1.Namespaces().Update(obj.(v1.Namespaces))
+			default:
+				log.Warn("unknown kind ", kind)
+			}
+			//k.Client()
+		default:
+			log.Warn("unknown version", ver)
+		}
+	}
 }

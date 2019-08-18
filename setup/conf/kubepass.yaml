@@ -7,6 +7,7 @@ runcmd:
 - apt-mark hold kubelet kubectl kubeadm
 - bash /usr/local/cloud-init.shar
 - chmod +x /usr/local/bin/*
+- mkdir -p /var/cache/kaniko
 - bash /usr/local/bin/master-init
 - bash /usr/local/bin/worker-init
 - bash /usr/local/bin/registry-init
