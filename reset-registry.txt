@@ -1,0 +1,6 @@
+multipass shell kube-master
+sudo bash
+docker update --restart=no registry
+docker kill registry
+docker rm registry
+docker run -d -p 443:5000 --restart=always --name registry -v /certs:/certs  -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key -e REGISTRY_AUTH=htpasswd  -e REGISTRY_AUTH_HTPASSWD_REALM=basic-realm -e REGISTRY_AUTH_HTPASSWD_PATH=/certs/htpasswd  registry:2
