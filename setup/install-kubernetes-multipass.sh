@@ -84,6 +84,6 @@ case "$CMD" in
  *)
     echo "usage: (create|config|destroy) [#workers] [mem] [disk] [#vcpu]"
     echo "mem and disk are in giga, workers and vcpu a count"
-    echo "defaults: 3 workers with 1vcpu with 2G mem 15G disk" 
+    echo "defaults: 2 workers with 1 vcpu with 2G mem 15G disk" 
   ;;
 esac

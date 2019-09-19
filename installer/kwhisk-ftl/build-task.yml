@@ -1,0 +1,28 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: kwhisk-builder
+  namespace: knative-whisk
+spec:
+  inputs:
+    resources:
+    - name: source
+      type: git
+    params:
+    - name: baseImage
+      default: registry.kube-system/actionloop/golang-v1.12:knative-whisk
+  outputs:
+    resources:
+    - name: target
+      type: image
+  steps:
+  -  name: build-and-push
+     image: "actionloop/golang-v1.12:knative-whisk" 
+     imagePullPolicy: IfNotPresent
+     #command: ["tail", "-f", "/dev/null"]
+     args:
+     - -build
+     - main
+     - /workspace/source/src
+     - ${inputs.params.baseImage}
+     - ${outputs.resources.target.url}
