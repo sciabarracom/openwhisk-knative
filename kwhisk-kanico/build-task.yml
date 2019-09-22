@@ -1,0 +1,54 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: kwhisk-builder
+  namespace: knative-whisk
+spec:
+  inputs:
+    resources:
+      - name: source
+        type: git
+    params:
+    - name: pathToDockerFile
+      description: The path to the dockerfile to build
+      default: /workspace/source/Dockerfile
+    - name: pathToContext
+      description: The build context used by Kaniko (https://github.com/GoogleContainerTools/kaniko#kaniko-build-contexts)
+      default: /workspace/source
+  outputs:
+    resources:
+      - name: target
+        type: image
+  steps:
+  -  name: build-and-push
+     image: gcr.io/kaniko-project/executor:latest
+     imagePullPolicy: IfNotPresent
+     command:
+      - /kaniko/executor
+     args:
+     - --dockerfile=${inputs.params.pathToDockerFile}
+     - --destination=${outputs.resources.target.url}
+     - --context=${inputs.params.pathToContext}
+     - --skip-tls-verify
+     - --cache=true
+     - --cache-dir=/cache
+     - --cache-ttl=6h
+     - --single-snapshot
+     volumeMounts:
+      - name: cache
+        mountPath: "/cache"
+      - name: docker-config
+        mountPath: /kaniko/.docker
+  volumes:
+  - name: cache
+    persistentVolumeClaim:
+      claimName: kaniko-cache-pvc
+  
+  - name: docker-config
+    projected:
+      sources:
+      - secret:
+         name: docker-registry-secret
+         items:
+         - key: .dockerconfigjson
+           path: config.json

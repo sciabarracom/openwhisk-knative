@@ -1,0 +1,75 @@
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: local-storage
+  namespace: knative-whisk
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: kaniko-cache
+  namespace: knative-whisk
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  local:
+    path: /var/cache/kaniko
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - kube-node1
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: kaniko-cache-pvc
+  namespace: knative-whisk
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: local-storage
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: knative-whisk
+  name: kaniko-load-cache
+spec:
+  backoffLimit: 4
+  template:
+    metadata:
+      labels:
+        app: kaniko-load-cache
+    spec:
+      restartPolicy: Never
+      containers:
+       - name: kaniko-warmer
+         imagePullPolicy: Always
+         image: gcr.io/kaniko-project/warmer:latest
+         args:
+         - --cache-dir=/cache
+         - --image=actionloop/golang-v1.12:knative-whisk
+         volumeMounts:
+         - mountPath: "/cache"
+           name: cache
+      #tolerations:
+      # - key: node-role.kubernetes.io/master
+      #   effect: NoSchedule
+      volumes:
+       - name: cache
+         persistentVolumeClaim:
+           claimName: kaniko-cache-pvc
